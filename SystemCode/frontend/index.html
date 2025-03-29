@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Query</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="upload-section">
+            <h2>Upload PDF</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="file" accept=".pdf">
+                <button type="submit" id="uploadButton">Upload File</button>
+            </form>
+            <p id="uploadMessage"></p>
+        </div>
+
+    <div class="query-section">
+            <h2>Input Query</h2>
+            <textarea id="queryInput" placeholder="Enter your query..."></textarea>
+            <button id="queryButton">Submit Query</button>
+            <p id="queryResult"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
