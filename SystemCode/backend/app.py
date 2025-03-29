@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+from extracting import extract_text_from_pdf, clean_text, create_json_entry
+from scraping import search_reddit_posts, save_posts_to_jsonl
 
 app = Flask(__name__)
 CORS(app)
@@ -21,8 +23,17 @@ def upload_file():
     if file.filename == '':
         return jsonify({"message": "No selected file"}), 400
 
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(filepath)
+
+    text = extract_text_from_pdf(filepath)
+    text = clean_text(text)
+
+    output_path = '../../Datasets/goverment_truth.jsonl'
+    output_dir = os.path.dirname(output_path)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    create_json_entry(text, output_path)
 
     return jsonify({"message": f"File '{file.filename}' uploaded successfully"}), 200
 
@@ -31,8 +42,17 @@ def upload_file():
 def query():
     """Handle the query input from the text box"""
     user_query = request.json.get('query')
-    return jsonify({"message": f"Received query: {user_query}"}), 200
+    output_path = "../../Datasets/reddit_contents.jsonl"
 
+    contents = search_reddit_posts(query, limit=10, num_comments=3, sort_by="hot")
+
+    # Save the results to a JSON Lines file
+    output_dir = os.path.dirname(output_path)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    save_posts_to_jsonl(contents, filename=output_path)
+
+    return jsonify({"message": f"Received query: {user_query}"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

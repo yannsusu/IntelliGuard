@@ -3,3 +3,5 @@ PyMuPDF
 nltk
 flask
 flask_cors
+spacy
+jsonlines
