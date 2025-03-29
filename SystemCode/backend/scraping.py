@@ -83,15 +83,3 @@ def save_posts_to_jsonl(posts, filename):
             # Write each post as a JSON object on a new line
             json.dump(post, file, ensure_ascii=False)
             file.write("\n")
-
-# Run the scraper
-if __name__ == "__main__":
-    query = "anti abortion law usa"
-    output_path = "../Datasets/reddit_contents.jsonl"
-
-    contents = search_reddit_posts(query, limit=10, num_comments=3, sort_by="hot")
-
-    # Save the results to a JSON Lines file
-    save_posts_to_jsonl(contents, filename=output_path)
-
-    print(f"Scraped posts and comments saved to '{output_path}'.")
