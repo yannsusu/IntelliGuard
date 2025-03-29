@@ -18,7 +18,6 @@ def clean_text(text):
     """Clean extracted text by removing unwanted newlines and extra spaces."""
     text = text.replace("\n", " ")
     text = " ".join(text.split())
-    text = re.sub(r'\b[0-9]+\b(?!\))', '', text)
     text = re.sub(r'S\.B\.ANo\.[A-Za-z0-9]+', '', text)
     return text
 
@@ -51,17 +50,3 @@ def create_json_entry(text, output_path):
                 "label": "non-rumor"
             }
             save_to_jsonl(data, output_path)
-
-def main(pdf_path, output_path):
-    """Main function to extract text from PDF and create JSON entries."""
-    try:
-        text = extract_text_from_pdf(pdf_path)
-        text = clean_text(text)
-        create_json_entry(text, output_path)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-pdf_path = '../Documents/SB00008F.pdf'
-output_path = '../Datasets/goverment_truth.jsonl'
-
-main(pdf_path, output_path)
