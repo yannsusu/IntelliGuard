@@ -6,7 +6,7 @@ const queryButton = document.getElementById('queryButton');
 const queryInput = document.getElementById('queryInput');
 const queryResult = document.getElementById('queryResult');
 
-BASE_URL = 'http://127.0.0.1:5000'
+BASE_URL = 'http://127.0.0.1:5050'
 
 uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -25,8 +25,12 @@ uploadForm.addEventListener('submit', async (e) => {
         body: formData
     });
 
-    const result = await response.json();
-    uploadMessage.textContent = result.message || result.error;
+    if (response.ok) {
+        const result = await response.json();
+        uploadMessage.textContent = result.message || 'Upload successful';
+    } else {
+        uploadMessage.textContent = 'Upload failed!';
+    }
 });
 
 queryButton.addEventListener('click', async () => {

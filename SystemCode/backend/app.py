@@ -1,17 +1,16 @@
+from werkzeug.utils import secure_filename
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-from extracting import extract_text_from_pdf, clean_text, create_json_entry
+
+from extracting import process_file
 from scraping import search_reddit_posts, save_posts_to_jsonl
 
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '..', '..', 'Documents')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+UPLOAD_FOLDER = os.path.join(os.getcwd(), '../../Documents')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -20,20 +19,16 @@ def upload_file():
         return jsonify({"message": "No file part"}), 400
 
     file = request.files['file']
+    # file = '../Documents/SB00008F.pdf'
+
     if file.filename == '':
         return jsonify({"message": "No selected file"}), 400
 
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(filepath)
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(file_path)
 
-    text = extract_text_from_pdf(filepath)
-    text = clean_text(text)
-
-    output_path = '../../Datasets/goverment_truth.jsonl'
-    output_dir = os.path.dirname(output_path)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    create_json_entry(text, output_path)
+    process_file(file_path)
 
     return jsonify({"message": f"File '{file.filename}' uploaded successfully"}), 200
 
@@ -42,17 +37,13 @@ def upload_file():
 def query():
     """Handle the query input from the text box"""
     user_query = request.json.get('query')
-    output_path = "../../Datasets/reddit_contents.jsonl"
+    # user_query = ''
 
-    contents = search_reddit_posts(query, limit=10, num_comments=3, sort_by="hot")
-
-    # Save the results to a JSON Lines file
-    output_dir = os.path.dirname(output_path)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    save_posts_to_jsonl(contents, filename=output_path)
+    output_path = "../../Datasets/combined_data.jsonl"
+    contents = search_reddit_posts(user_query, limit=3, num_comments=2, sort_by="relevance")
+    save_posts_to_jsonl(contents, output_path, append=False)
 
     return jsonify({"message": f"Received query: {user_query}"}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5050)
