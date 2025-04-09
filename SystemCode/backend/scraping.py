@@ -103,7 +103,7 @@ def search_reddit_posts(query, subreddit="all", limit=10, num_comments=3, sort_b
             "time": datetime.utcfromtimestamp(submission.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
             "url": submission.url,
             "policies": matched_policies,
-            "label": "related" if matched_policies else "unverified"
+            "label": ""
         })
         results.append(post_data)
         global_id += 1
@@ -139,12 +139,11 @@ def get_top_comments(submission, num_comments, start_id):
             "id": f"P{start_id + i:03d}",
             "type": "comment",
             "text": comment.body,
-            "entities": entities,
             "author": comment.author.name if comment.author else "deleted",
             "time": datetime.utcfromtimestamp(comment.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
             "url": f"https://www.reddit.com{comment.permalink}",
             "policies": matched_policies,
-            "label": "related" if matched_policies else "unverified"
+            "label": ""
         })
         comments.append(comments_data)
     return comments

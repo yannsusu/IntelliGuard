@@ -9,7 +9,6 @@ with open(input_file, "r", encoding="utf-8") as infile, \
         data = json.loads(line)
         id = data.get("id", "")
         text = data.get("text", "")
-        entities = data.get("entities", [])
         label = data.get("label", "")
 
         policies = data.get("policies", [])
@@ -17,17 +16,14 @@ with open(input_file, "r", encoding="utf-8") as infile, \
         policies_data = []
         for policy in policies:
             policy_text = policy.get("text", "")
-            entities = policy.get("entities", [])
 
             policies_data.append({
                 "policy_text": policy_text,
-                "entities": entities
             })
 
         output_data = {
             "id": id,
             "text": text,
-            "entities": entities,
             "policies": policies_data,
             "label": label
         }
