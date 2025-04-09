@@ -1,0 +1,9 @@
+praw
+PyMuPDF
+nltk
+flask
+flask_cors
+spacy
+pymongo
+sentence_transformers
+dotenv
