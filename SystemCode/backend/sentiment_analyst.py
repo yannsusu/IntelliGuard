@@ -67,10 +67,3 @@ def analyze_and_generate_report(input_path):
     posts_with_sentiment = analyze_sentiment(data)
     generate_report(posts_with_sentiment)
     return posts_with_sentiment
-
-if __name__ == "__main__":
-    model_path = "../../Model"
-    combined_data = "../../Datasets/combined_data.jsonl"
-    data = load_jsonl(combined_data)
-    posts_with_sentiment = analyze_sentiment(data)
-    generate_report(posts_with_sentiment)
