@@ -88,17 +88,12 @@ def search_reddit_posts(query, subreddit="all", limit=10, num_comments=3, sort_b
             continue
 
         seen_posts.add(post_key)
-
-        matched_policies = []
-        entities = apply_ner(submission.title + " " + submission.selftext)
-        for ent_text, ent_label in entities:
-            matched_policies.extend(find_policy(ent_text))
+        matched_policies = find_policy(submission.title + " " + submission.selftext)
 
         post_data = ({
             "id": f"P{global_id:03d}",  # P001, P002, P003...
             "type": "post",
             "text": submission.title + " " + submission.selftext,
-            "entities": entities,
             "author": submission.author.name if submission.author else "deleted",
             "time": datetime.utcfromtimestamp(submission.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
             "url": submission.url,
@@ -129,11 +124,7 @@ def get_top_comments(submission, num_comments, start_id):
     comments = []
     for i, comment in enumerate(submission.comments.list()[:num_comments]):
 
-        matched_policies = []
-        comment_text = comment.body
-        entities = apply_ner(comment_text)
-        for ent_text, ent_label in entities:
-            matched_policies.extend(find_policy(ent_text))
+        matched_policies = find_policy(comment.body)
 
         comments_data = ({
             "id": f"P{start_id + i:03d}",
@@ -159,7 +150,7 @@ def save_posts_to_jsonl(posts, filename, append=False):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    mode = "a" if append else "w"
+    # mode = "a" if append else "w"
     with open(filename, "w", encoding="utf-8") as file:
         for post in posts:
             # Write each post as a JSON object on a new line

@@ -1,10 +1,12 @@
 from werkzeug.utils import secure_filename
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
 
 from extracting import process_file
 from scraping import search_reddit_posts, save_posts_to_jsonl
+from rumor_detect import predict_rumors
+from sentiment_analyst import analyze_and_generate_report
 
 app = Flask(__name__)
 CORS(app)
@@ -39,11 +41,25 @@ def query():
     user_query = request.json.get('query')
     # user_query = ''
 
-    output_path = "../../Datasets/combined_data.jsonl"
-    contents = search_reddit_posts(user_query, limit=3, num_comments=2, sort_by="relevance")
-    save_posts_to_jsonl(contents, output_path, append=False)
+    combined_data = "../../Datasets/combined_data.jsonl"
+    contents = search_reddit_posts(user_query, limit=10, num_comments=3, sort_by="relevance")
+    save_posts_to_jsonl(contents, combined_data, append=False)
 
-    return jsonify({"message": f"Received query: {user_query}"}), 200
+    model_path = "../../Model"
+    # predicted = "../../Datasets/prediction_results.jsonl"
+    rumors = predict_rumors(model_path, combined_data)
+    analyze_and_generate_report(combined_data)
+
+    response = {
+        "rumor_results": rumors,
+        "image_url": "/sentiment_image"
+    }
+
+    return jsonify(response), 200
+
+@app.route('/sentiment_image')
+def serve_sentiment_image():
+    return send_file('../../Datasets/sentiment.png', mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5050)
