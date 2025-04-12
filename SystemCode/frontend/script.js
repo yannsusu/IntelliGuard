@@ -4,7 +4,11 @@ const uploadMessage = document.getElementById('uploadMessage');
 
 const queryButton = document.getElementById('queryButton');
 const queryInput = document.getElementById('queryInput');
-const queryResult = document.getElementById('queryResult');
+const rumorList = document.getElementById('rumors-list');
+const emotionChart = document.getElementById('emotion-chart');
+
+const rumorsSection = document.getElementById('rumors-section');
+const emotionSection = document.getElementById('emotion-section');
 
 BASE_URL = 'http://127.0.0.1:5050'
 
@@ -35,7 +39,16 @@ uploadForm.addEventListener('submit', async (e) => {
 
 queryButton.addEventListener('click', async () => {
     const query = queryInput.value.trim();
-    if (query) {
+
+    if (!query) {
+        alert("Please enter a query.");
+        return;
+    }
+
+    rumorList.innerHTML = "<li>Loading...</li>";
+    emotionChart.src = "";
+
+    try {
         const response = await fetch(`${BASE_URL}/query`, {
             method: 'POST',
             headers: {
@@ -44,9 +57,21 @@ queryButton.addEventListener('click', async () => {
             body: JSON.stringify({ query: query })
         });
 
-        const result = await response.json();
-        queryResult.textContent = result.response || "No response from model";
-    } else {
-        queryResult.textContent = "Please enter a query.";
+        const data = await response.json();
+
+        rumorList.innerHTML = ""; // Clear previous rumors
+        data.rumor_results.forEach(rumor => {
+            const listItem = document.createElement('li');
+            listItem.textContent = rumor.text;
+            rumorList.appendChild(listItem);
+        });
+
+        emotionChart.src = `${BASE_URL}${data.image_url}`;
+
+        rumorsSection.style.display = 'block';
+        emotionSection.style.display = 'block';
+
+    } catch (error) {
+        queryResult.textContent = "Error: " + error.message;
     }
 });

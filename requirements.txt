@@ -7,3 +7,6 @@ spacy
 pymongo
 sentence_transformers
 dotenv
+transformers
+peft
+torch
