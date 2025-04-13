@@ -55,3 +55,32 @@ p {
     font-size: 14px;
     margin-top: 10px;
 }
+
+.rumor-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 12px 0;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.highlighted-content {
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+
+.ner-content {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.author-content, .time-content, .url-content {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.url-content a {
+    color: #007bff;
+    text-decoration: none;
+}
