@@ -1,3 +1,0 @@
-*.bin filter=lfs diff=lfs merge=lfs -text
-Model/*.bin filter=lfs diff=lfs merge=lfs -text
-Model/pytorch_model.bin filter=lfs diff=lfs merge=lfs -text
