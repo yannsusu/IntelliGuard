@@ -4,7 +4,7 @@ const uploadMessage = document.getElementById('uploadMessage');
 
 const queryButton = document.getElementById('queryButton');
 const queryInput = document.getElementById('queryInput');
-const rumorList = document.getElementById('rumors-list');
+const rumorList = document.getElementById('rumors-item');
 const emotionChart = document.getElementById('emotion-chart');
 
 const rumorsSection = document.getElementById('rumors-section');
@@ -59,10 +59,37 @@ queryButton.addEventListener('click', async () => {
 
         const data = await response.json();
 
-        rumorList.innerHTML = ""; // Clear previous rumors
+        rumorList.innerHTML = "";
         data.rumor_results.forEach(rumor => {
-            const listItem = document.createElement('li');
-            listItem.textContent = rumor.text;
+            const listItem = document.createElement('div');
+            listItem.className = 'rumor-item';
+
+            const highlightedDiv = document.createElement('p');
+            highlightedDiv.className = 'highlighted-content';
+            highlightedDiv.innerHTML = rumor.highlighted_text;
+
+            const nerDiv = document.createElement('p');
+            nerDiv.className = 'ner-content';
+            nerDiv.innerHTML = rumor.ner || '';
+
+            const authorDiv = document.createElement('p');
+            authorDiv.className = 'author-content';
+            authorDiv.innerHTML = `<strong>Author:</strong> ${rumor.author || 'Unknown'}`;
+
+            const timeDiv = document.createElement('p');
+            timeDiv.className = 'time-content';
+            timeDiv.innerHTML = `<strong>Time:</strong> ${rumor.time || 'Not provided'}`;
+
+            const urlDiv = document.createElement('p');
+            urlDiv.className = 'url-content';
+            urlDiv.innerHTML = `<strong>URL:</strong> <a href="${rumor.link || '#'}" target="_blank">${rumor.link || 'No URL'}</a>`;
+
+            listItem.appendChild(highlightedDiv);
+            listItem.appendChild(nerDiv);
+            listItem.appendChild(authorDiv);
+            listItem.appendChild(timeDiv);
+            listItem.appendChild(urlDiv);
+
             rumorList.appendChild(listItem);
         });
 

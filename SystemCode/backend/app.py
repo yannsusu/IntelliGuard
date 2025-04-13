@@ -34,7 +34,6 @@ def upload_file():
 
     return jsonify({"message": f"File '{file.filename}' uploaded successfully"}), 200
 
-
 @app.route('/query', methods=['POST'])
 def query():
     """Handle the query input from the text box"""
@@ -46,8 +45,8 @@ def query():
     save_posts_to_jsonl(contents, combined_data, append=False)
 
     model_path = "../../Model"
-    # predicted = "../../Datasets/prediction_results.jsonl"
-    rumors = predict_rumors(model_path, combined_data)
+    predicted = "../../Datasets/prediction_results.jsonl"
+    rumors = predict_rumors(model_path, combined_data, predicted)
     analyze_and_generate_report(combined_data)
 
     response = {
