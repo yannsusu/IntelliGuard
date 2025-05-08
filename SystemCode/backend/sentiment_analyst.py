@@ -9,20 +9,47 @@ def load_jsonl(path):
     with open(path, 'r', encoding='utf-8') as f:
         return [json.loads(line) for line in f]
 
-def analyze_sentiment(data):
+def analyze_sentiment(data, max_chunk_words=400):
     posts_with_sentiment = []
+
     for item in data:
-        result = sentiment_pipeline(item["text"])
-        if result and isinstance(result, list) and "label" in result[0]:
-            item["emotion_labels"] = result
-            item["dominant_emotion"] = result[0]["label"]
-            item["dominant_score"] = result[0]["score"]
+        text = item.get("text", "")
+        chunks = [text[i:i+max_chunk_words] for i in range(0, len(text), max_chunk_words)]
+
+        all_results = []
+        for chunk in chunks:
+            result = sentiment_pipeline(chunk)
+            if result and isinstance(result, list) and "label" in result[0]:
+                all_results.append(result[0]["label"])
+
+        if all_results:
+            # 统计出现最多的情绪作为最终主情绪
+            dominant_emotion = Counter(all_results).most_common(1)[0][0]
+            item["dominant_emotion"] = dominant_emotion
+            item["dominant_score"] = all_results.count(dominant_emotion) / len(all_results)
+            item["emotion_labels"] = [{"label": emo, "count": all_results.count(emo)} for emo in set(all_results)]
         else:
             print(f"Skipping item with no valid emotion result: {item}")
             item["dominant_emotion"] = "no emotion"
             item["dominant_score"] = 0.0
+
         posts_with_sentiment.append(item)
+
     return posts_with_sentiment
+
+#def analyze_sentiment(data):
+#    posts_with_sentiment = []
+#        result = sentiment_pipeline(item["text"])
+#        if result and isinstance(result, list) and "label" in result[0]:
+#            item["emotion_labels"] = result
+#            item["dominant_emotion"] = result[0]["label"]
+#            item["dominant_score"] = result[0]["score"]
+#        else:
+#            print(f"Skipping item with no valid emotion result: {item}")
+#            item["dominant_emotion"] = "no emotion"
+#            item["dominant_score"] = 0.0
+#        posts_with_sentiment.append(item)
+#    return posts_with_sentiment
 
 def plot_sentiment_pie_chart(emotion_counter, total_posts):
     labels = list(emotion_counter.keys())
