@@ -18,9 +18,18 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def upload_file():
     """Handle file upload"""
     uploaded_files = request.files.getlist("files")
+    results = []
+
     for file in uploaded_files:
         if file and file.filename.endswith('.pdf'):
-            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+            filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.save(filepath)
+            try:
+                process_file(filepath)
+                results.append({"filename": file.filename, "status": "processed"})
+            except Exception as e:
+                print(f"Error processing {file.filename}: {e}")
+                results.append({"filename": file.filename, "status": "error", "error": str(e)})
     return jsonify({"message": "Files uploaded successfully"})
 
 @app.route('/query', methods=['POST'])
@@ -30,7 +39,7 @@ def query():
     # user_query = ''
 
     combined_data = "../../Datasets/combined_data.jsonl"
-    contents = search_reddit_posts(user_query, limit=1, num_comments=1, sort_by="relevance")
+    contents = search_reddit_posts(user_query, limit=10, num_comments=3, sort_by="relevance")
     save_posts_to_jsonl(contents, combined_data, append=False)
 
     model_path = "../../Model"
