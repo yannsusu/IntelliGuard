@@ -18,7 +18,7 @@ reddit = praw.Reddit(
 # Initialize the SentenceTransformer model (for any additional embeddings)
 model = SentenceTransformer('all-MiniLM-L6-v2')
 # Load the pre-trained NER model from spaCy
-nlp = spacy.load('en_core_web_sm')
+# nlp = spacy.load('en_core_web_sm')
 
 # MongoDB connection setup
 client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -55,15 +55,15 @@ def find_policy(query_text):
 
     return matched_policies
 
-def apply_ner(text):
-    """
-    Apply Named Entity Recognition (NER) to the given text to extract entities.
-    :param text: The text to process with NER
-    :return: A list of entities found in the text
-    """
-    doc = nlp(text)
-    entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ in ["LAW", "ORG", "GPE", "PERSON", "PRODUCT"]]
-    return entities
+# def apply_ner(text):
+#     """
+#     Apply Named Entity Recognition (NER) to the given text to extract entities.
+#     :param text: The text to process with NER
+#     :return: A list of entities found in the text
+#     """
+#     doc = nlp(text)
+#     entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ in ["LAW", "ORG", "GPE", "PERSON", "PRODUCT"]]
+#     return entities
 
 def search_reddit_posts(query, subreddit="all", limit=10, num_comments=3, sort_by="relevant"):
     """
