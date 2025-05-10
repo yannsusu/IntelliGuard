@@ -1,27 +1,41 @@
 # IntelliGuard
 A government-focused AI system that detects rumors and analyzes public sentiment on social media.
 
-# Project Structure
+## Project Structure
+```
 IntelliGuard
-    -Dataset
-    -Documents
-    -Model
-    -SystemCode
-        -backend
-        -frontend
+|    -Dataset
+|    -Model
+|    -Policies
+|    -SystemCode
+|        -backend
+|        -frontend
+```      
 
 # How to run it?
-# 1. clone the repository
-git clone https://github.com/yannsusu/IntelliGuard
-cd IntelliGuard
+1. Clone the repository
+    ```bash
+    git clone https://github.com/yannsusu/IntelliGuard
+    cd IntelliGuard
 
-# 2. set the environment
-pip install -r requirement.txt
+2. Set the environment
+    ```bash
+    pip install -r requirement.txt
 
-# 3. run the backend
-cd SystemCode/backend
-python app.py
+3. Run the backend
+    ```bash
+   cd SystemCode/backend
+   python app.py
 
-# 4. run the frontend
-cd ../frontend
-python start.py
+4. Run the frontend
+    ```bash
+   cd ../frontend
+   python start.py
+
+## Example Usage
+1. Upload policy document (`SB00008F`) on Polices Dictionary.
+2. Input "`Abortion Law`" in the query box.
+![img.png](input.png)
+3. Rumor detection and sentiment analysis will be performed.
+![img.png](rumor.png)
+![img.png](sentiment.png)
