@@ -12,7 +12,7 @@ IntelliGuard
 |        -frontend
 ```      
 
-# How to run it?
+## How to run it?
 1. Clone the repository
     ```bash
     git clone https://github.com/yannsusu/IntelliGuard
