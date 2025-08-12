@@ -42,7 +42,8 @@ def query():
     contents = search_reddit_posts(user_query, limit=10, num_comments=3, sort_by="relevance")
     save_posts_to_jsonl(contents, combined_data, append=False)
 
-    model_path = "../../Model"
+    # model_path = "../../Model/bert_v1"
+    model_path = "../../Model/bert_rumor"
     predicted = "../../Datasets/prediction_results.jsonl"
     rumors = predict_rumors(model_path, combined_data, predicted)
     print(rumors)

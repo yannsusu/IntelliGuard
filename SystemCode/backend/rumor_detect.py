@@ -3,7 +3,7 @@ import json
 import torch
 from pathlib import Path
 from transformers import BertTokenizer, BertForSequenceClassification
-from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForTokenClassification, pipeline
 from peft import get_peft_model, PeftConfig, PeftModel
 from captum.attr import IntegratedGradients
 
@@ -12,15 +12,36 @@ def load_jsonl(path):
         return [json.loads(line) for line in f]
 
 
+# def load_model(model_path):
+#     tokenizer = BertTokenizer.from_pretrained(model_path)
+#     peft_config = PeftConfig.from_pretrained(model_path)
+#     base_model = BertForSequenceClassification.from_pretrained(peft_config.base_model_name_or_path, num_labels=3)
+#     model = get_peft_model(base_model, peft_config)
+#     model.load_state_dict(torch.load(model_path + "/pytorch_model.bin", map_location=torch.device('cpu')))
+#     model.eval()
+#
+#     return model, tokenizer
+
 def load_model(model_path):
-    tokenizer = BertTokenizer.from_pretrained(model_path)
-    peft_config = PeftConfig.from_pretrained(model_path)
-    base_model = BertForSequenceClassification.from_pretrained(peft_config.base_model_name_or_path, num_labels=3)
-    model = get_peft_model(base_model, peft_config)
-    model.load_state_dict(torch.load(model_path + "/pytorch_model.bin", map_location=torch.device('cpu')))
-    model.eval()
+    model = AutoModelForSequenceClassification.from_pretrained(model_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     return model, tokenizer
+
+# def load_model(model_path):
+#     tokenizer = BertTokenizer.from_pretrained(model_path)
+#     peft_config = PeftConfig.from_pretrained(model_path)
+#
+#     base_model = BertForSequenceClassification.from_pretrained(
+#         peft_config.base_model_name_or_path,
+#         num_labels=2
+#     )
+#
+#     model = get_peft_model(base_model, peft_config)
+#
+#     model.eval()
+#
+#     return model, tokenizer
 
 def ner_extract(text):
     if not hasattr(ner_extract, "ner_pipeline"):
@@ -180,7 +201,9 @@ def predict_rumors(model_path, input_path, output_path):
     return rumors
 
 if __name__ == "__main__":
-    model_path = "../../Model"
+    # model_path = "../../Model/bert_v1"
+    model_path = "../../Model/bert_rumor"
+
     input_path = "../../Datasets/combined_data.jsonl"
     output_path = "../../Datasets/prediction_results.jsonl"
 
