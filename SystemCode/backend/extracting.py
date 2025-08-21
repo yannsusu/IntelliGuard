@@ -13,7 +13,7 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 nlp = spacy.load('en_core_web_sm')
 
 # MongoDB connection setup
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+client = pymongo.MongoClient("mongodb://localhost:27018/")
 db = client["intelliguard_db"]
 collection = db["policies"]
 
